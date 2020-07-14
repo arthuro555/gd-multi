@@ -1,13 +1,18 @@
 {
   "name": "gd-multi",
   "version": "1.0.0",
-  "main": "Exported/index.js",
+  "main": "src/cli.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "bin": {
+    "gdmulti": "src/cli"
+  },
   "author": "arthuro555",
   "license": "MIT",
   "dependencies": {
-    "canvas": "^2.6.1",
-    "express": "^4.17.1",
-    "jsdom": "^16.3.0",
-    "node-localstorage": "^2.1.6"
+    "fs-extra": "^9.0.1",
+    "gdexporter": "^2.2.0",
+    "minimist": "^1.2.5"
   }
 }
