@@ -22,7 +22,8 @@ gdexporter.exporter(inputProject, exportdir).then(() => {
 })
 .then(project => {
     fs.copyFileSync(path.join(__dirname, "templates", "index.js"), path.join(exportdir, "index.js"));
-    fs.writeFileSync(path.join(exportdir, "project.json"),
+    fs.copyFileSync(path.join(__dirname, "templates", "canvasToAscii.js"), path.join(exportdir, "canvasToAscii.js"));
+    fs.writeFileSync(path.join(exportdir, "package.json"),
         fs.readFileSync(path.join(__dirname, "templates", "package.json"))
             .toString()
             .replace("gamename", project.getName().toLowerCase().replace(" ", ""))

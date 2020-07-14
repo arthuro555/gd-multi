@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "src/cli.js",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "test": "node . -o test -p \"D:\\Documents\\documents\\GDevelop projects\\My project6\\platformer.json\" && cd test && yarn && node ."
   },
   "bin": {
     "gdmulti": "src/cli"

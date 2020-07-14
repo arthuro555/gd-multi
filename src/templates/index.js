@@ -4,9 +4,10 @@ const path = require("path");
 const repl = require('repl');
 const JSDOM = require("jsdom").JSDOM;
 const express = require("express");
+const cta = require("./canvasToAscii");
 
 // We need to host the resources on a webserver. So we host one:
-const port = new express().use('/', express.static(__dirname)).listen(8000).address().port;
+const port = new express().use('/', express.static(__dirname)).listen().address().port;
 
 // Make a virtual dom as similar to the browser as possible
 const jsdom = new JSDOM(undefined, {
@@ -23,6 +24,7 @@ window.console = global.console;
 delete window.localStorage; // Delete default implementation
 window.localStorage = new require('node-localstorage').LocalStorage(path.join(__dirname, "localStorage"));
 
+// Manually load the scripts to know when they are all loaded.
 require('jsdom').JSDOM.fromFile(path.join(__dirname, "index.html")).then((jsdom) => {
     return new Promise((resolver) => {
         const scripts = jsdom.window.document.head.getElementsByTagName("script");
@@ -47,6 +49,7 @@ require('jsdom').JSDOM.fromFile(path.join(__dirname, "index.html")).then((jsdom)
 })
 .catch((r) => console.error(`Error while loading the game files: ${r}`))
 .then(() => {
+    // Run the GDevelop normal initialization sequence
     return new Promise((resolve) => {
         //Initialization
         var game = new window.gdjs.RuntimeGame(window.gdjs.projectData, {});
@@ -67,6 +70,15 @@ require('jsdom').JSDOM.fromFile(path.join(__dirname, "index.html")).then((jsdom)
     });
 })
 .then(game => {
-    global.game = game;
+    // Declare a basic API for the REPL
+    global.runtimeGame = game;
+    global.runtimeScene = game._sceneStack.getCurrentScene();
+    global.renderFrameToAscii = (filename) => {
+        const canvas = game.getRenderer().getCanvas()
+        let render = cta(canvas.getContext("2d"), canvas.height, canvas.width)
+        if(filename != undefined)
+            fs.writeFileSync(filename, render);
+        return render;
+    }
     repl.start('> ').context.global = global;
 });
